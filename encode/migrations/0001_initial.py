@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('command', models.TextField(help_text='The command to execute, excluding the encoder executable\'s path or name. Supports variable interpolation. Example: -i "{input}" -acodec libvorbis -ab 128k -vcodec libvpx -s 320x240 "{output}"', verbose_name='Command')),
                 ('created_at', models.DateTimeField(help_text='The date and time the profile was created.', verbose_name='Created at', auto_now_add=True)),
                 ('modified_at', models.DateTimeField(help_text='The date and time the profile was last modified.', verbose_name='Modified at', auto_now=True)),
-                ('encoder', models.ForeignKey(to='encode.Encoder', help_text='Encoder for this profile.', null=True)),
+                ('encoder', models.ForeignKey(to='encode.Encoder', help_text='Encoder for this profile.', null=True, on_delete=models.SET_NULL)),
             ],
             options={
                 'ordering': ['-name'],
@@ -92,7 +92,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Audio',
             fields=[
-                ('mediabase_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='encode.MediaBase')),
+                ('mediabase_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='encode.MediaBase', on_delete=models.SET_NULL)),
             ],
             options={
                 'verbose_name': 'Audio Clip',
@@ -103,7 +103,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Snapshot',
             fields=[
-                ('mediabase_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='encode.MediaBase')),
+                ('mediabase_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='encode.MediaBase', on_delete=models.SET_NULL)),
             ],
             options={
                 'verbose_name': 'Snapshot',
@@ -114,7 +114,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Video',
             fields=[
-                ('mediabase_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='encode.MediaBase')),
+                ('mediabase_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='encode.MediaBase', on_delete=models.SET_NULL)),
             ],
             options={
                 'verbose_name': 'Video Clip',
@@ -135,6 +135,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mediabase',
             name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, help_text='The user who uploaded the input file.', null=True),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, help_text='The user who uploaded the input file.', null=True, on_delete=models.SET_NULL),
         ),
     ]

@@ -219,7 +219,8 @@ class EncodingProfile(models.Model):
     encoder = models.ForeignKey(
         Encoder,
         null=True,
-        help_text=_("Encoder for this profile.")
+        help_text=_("Encoder for this profile."),
+        on_delete=models.SET_NULL,
     )
     command = models.TextField(
         _('Command'),
@@ -335,7 +336,8 @@ class MediaBase(models.Model):
     user = models.ForeignKey(
         User,
         null=True,
-        help_text=_("The user who uploaded the input file.")
+        help_text=_("The user who uploaded the input file."),
+        on_delete=models.SET_NULL,
     )
 
     created_at = models.DateTimeField(
@@ -383,7 +385,7 @@ class MediaBase(models.Model):
         :rtype: str or ``None``
         """
         if self.input_file:
-            return os.path.join(settings.ENCODE_MEDIA_ROOT,
+            return os.path.join(settings.MEDIA_ROOT,
                 self.input_file.name)
 
         return None
@@ -519,21 +521,21 @@ class MediaBase(models.Model):
         # the local disk and is ready to be processed
         if self.encodable and self.input_path:
             # import the tasks here to prevent a circular import
-            from encode.tasks import EncodeMedia, StoreMedia
+            from encode.tasks import encode_media, store_media, test_task
 
             # transfer input file from local disk to remote encoder *once*
-            if self.output_files.count() == 0:
-                try:
-                    # transfer_file is a celery.result.EagerResult instance
-                    transfer_file = self.input_file.transfer()
+            # if self.output_files.count() == 0:
+            #     try:
+            #         # transfer_file is a celery.result.EagerResult instance
+            #         transfer_file = self.input_file.transfer()
 
-                    logger.debug("Transferred file: {} (success: {})".format(
-                        short_path(self.input_path),
-                        transfer_file.result))
+            #         logger.debug("Transferred file: {} (success: {})".format(
+            #             short_path(self.input_path),
+            #             transfer_file.result))
 
-                except Exception as e:  # pragma: no cover
-                    logger.error("Error transferring file: {}".format(e))
-                    raise
+            #     except Exception as e:  # pragma: no cover
+            #         logger.error("Error transferring file: {}".format(e))
+            #         raise
 
             # encode input files on encoder
             # XXX: chain these tasks
@@ -547,18 +549,20 @@ class MediaBase(models.Model):
                         " does not exist.".format(profile_id))
                     raise
 
-                encode_media = EncodeMedia()
-                store_media = StoreMedia()
-                encode_media.apply_async(
-                    args=[profile, self.id, self.input_path,
-                          self.output_path(profile)],
-                    # XXX: don't hardcode
-                    queue='encoder',
-                    routing_key='media.encode',
+                # encode_media = EncodeMedia()
+                # store_media = StoreMedia()
+
+                encode_media.delay(str(profile_id), str(self.id), self.input_path,
+                          self.output_path(profile))
+                    # args=[profile_id, self.id, self.input_path,
+                    #       self.output_path(profile)],
+                    # # XXX: don't hardcode
+                    # queue='encoder',
+                    # routing_key='media.encode',
                     # add callback to transfer output file(s) from encoder to
                     # cdn
-                    link=store_media.s()
-                )
+                    # link=store_media.s()
+                # )
 
     class Meta:
         ordering = ("-created_at",)

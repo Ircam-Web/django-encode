@@ -21,32 +21,32 @@ class MediaDisplayWidget(forms.SelectMultiple):
     class Media:
         js = ("encode/js/media.js",)
 
-    def render(self, name, value, attrs=None, choices=()):
-        paths = []
-        script = ''
+    # def render(self, name, value, attrs=None, choices=()):
+    #     paths = []
+    #     script = ''
 
-        if value is not None:
-            for option_value, option_label in chain(self.choices, choices):
-                if option_value in [int(x) for x in value]:
-                    try:
-                        from encode import models
-                        path = models.MediaFile.objects.get(
-                            title=option_label).file.url
-                        paths.append(path)
-                    except models.MediaFile.DoesNotExist:
-                        pass
+    #     if value is not None:
+    #         for option_value, option_label in chain(self.choices, choices):
+    #             if option_value in [int(x) for x in value]:
+    #                 try:
+    #                     from encode import models
+    #                     path = models.MediaFile.objects.get(
+    #                         title=option_label).file.url
+    #                     paths.append(path)
+    #                 except models.MediaFile.DoesNotExist:
+    #                     pass
 
-            script = '''<script type="text/javascript">
-                $(document).ready(function() {
-                    var elem = $('#id_%(name)s');
-                    var widget = new collab.PreviewWidget(elem, %(paths)s);
-                });
-                </script>''' % {'name': name, 'paths': paths}
+    #         script = '''<script type="text/javascript">
+    #             $(document).ready(function() {
+    #                 var elem = $('#id_%(name)s');
+    #                 var widget = new collab.PreviewWidget(elem, %(paths)s);
+    #             });
+    #             </script>''' % {'name': name, 'paths': paths}
 
-        if attrs is None:
-            attrs = {}
+    #     if attrs is None:
+    #         attrs = {}
 
-        output = super(MediaDisplayWidget, self).render(name, value, attrs,
-                                                       choices)
+    #     output = super(MediaDisplayWidget, self).render(name, value, attrs,
+    #                                                    choices)
 
-        return mark_safe(output + script)
+    #     return mark_safe(output + script)

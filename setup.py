@@ -60,7 +60,7 @@ setup(
     url='http://github.com/collab-project/django-encode',
     license='MIT',
     install_requires=[
-        'celery>=3.1,<4.0',
+        'celery==4.4.7',
         'django-appconf>=0.6',
         'django-queued-storage>=0.8.0'
     ],
