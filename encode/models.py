@@ -313,7 +313,7 @@ class MediaBase(models.Model):
     )
     keep_input_file = models.BooleanField(
         _('Keep input file'),
-        default=False,
+        default=True,
         help_text=_(
             """Indicates that the input file should be saved and not
             be removed after it's encoded and uploaded.""")

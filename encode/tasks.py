@@ -66,11 +66,9 @@ def encode_media(profile_id, media_id, input_path, output_path):
         (encoding profile instance).
     """
     # find encoder
-    print('OK')
     profile_id = int(profile_id)
     media_id = int(media_id)
 
-    print(profile_id)
     profile = EncodingProfile.objects.get(id=profile_id)
     Encoder = get_encoder_class(profile.encoder.klass)
     encoder = Encoder(profile, input_path, output_path)
@@ -110,10 +108,11 @@ def encode_media(profile_id, media_id, input_path, output_path):
     logger.debug("Completed encoding ({0}) - output file: {1}".format(
         profile.mime_type, short_path(encoder.output_path)))
 
-    # return {
-    #     "id": media_id,
-    #     "profile_id": profile_id
-    # }
+
+    return {
+        "id": media_id,
+        "profile_id": profile_id
+    }
 
 
 @shared_task
