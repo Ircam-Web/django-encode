@@ -12,6 +12,8 @@ from django.core.files.base import ContentFile
 from encode.models import Audio, Video, EncodingProfile
 from encode.tests.helpers import WEBM_DATA, FileTestCase
 
+from django.contrib.auth.models import User
+
 
 class MediaBaseTestCase(FileTestCase):
     """
@@ -42,3 +44,27 @@ class MediaBaseTestCase(FileTestCase):
 
         self.assertRaises(EncodingProfile.DoesNotExist, vfile.save,
             profiles=[18])
+
+    def test_extract_attr(self):
+        """
+        `is_extract` returns value
+        """
+        afile = Audio.objects.create(title='Foo')
+        afile.extract = True
+
+        afile2 = Video.objects.create(title='Foo2')
+
+        self.assertEqual(afile.extract, True)
+        self.assertEqual(afile2.extract, False)
+
+
+    def test_reference_foreignkey(self):
+
+        user = User()
+        user.save()
+
+        afile = Audio.objects.create(title='Foo')
+        afile.reference = user
+        afile.save()
+
+        self.assertEqual(afile.reference, user)

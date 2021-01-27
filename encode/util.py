@@ -137,7 +137,6 @@ def storeMedia(model, inputFileField, title, profiles, fpath):
     mediaObj = model()
     mediaObj.title = title
     mediaObj.save()
-
     logger.debug("Created {} object: {}".format(fqn(mediaObj), mediaObj))
 
     # prevent circular import
@@ -223,6 +222,7 @@ class TemporaryMediaFile(object):
             delete=False
             ) as media_file:
             media_file.write(fileData.getvalue())
+
 
         if os.path.exists(media_file.name):
             logger.debug("Stored media data in temporary file: {}".format(

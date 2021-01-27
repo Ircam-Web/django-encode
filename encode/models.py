@@ -29,6 +29,9 @@ from encode.storage import QueuedEncodeSystemStorage
 from encode import UploadError, FILE_TYPES, VIDEO, AUDIO, SNAPSHOT
 from encode.util import get_random_filename, get_media_upload_to, short_path
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+
 
 __all__ = ['MediaFile', 'Encoder', 'EncodingProfile', 'MediaBase', 'Audio',
            'Video', 'Snapshot']
@@ -350,6 +353,16 @@ class MediaBase(models.Model):
         help_text=_('The date and time the object was last modified.'),
         auto_now=True
     )
+    extract = models.BooleanField(
+        _('Extract'),
+        help_text=_('Is it an extract ?'),
+        default = False
+    )
+
+
+    reference_content = models.ForeignKey(ContentType, on_delete=models.CASCADE, null = True, blank = True)
+    reference_id = models.PositiveIntegerField(null = True, blank = True)
+    reference = GenericForeignKey('reference_content', 'reference_id')
 
     @property
     def ready(self):
@@ -544,7 +557,7 @@ class MediaBase(models.Model):
                     # get the encoding profile
                     profile = EncodingProfile.objects.get(id=profile_id)
 
-                except EncodingProfile.DoesNotExist:
+                except EncodingProfile.DoesNotExist as e:
                     logger.error("Cannot encode: EncodingProfile with pk '{0}'"
                         " does not exist.".format(profile_id))
                     raise

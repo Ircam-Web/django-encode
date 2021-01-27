@@ -8,6 +8,7 @@ Encoders.
 from __future__ import unicode_literals
 
 import os
+import errno
 import shlex
 import logging
 import subprocess
@@ -114,7 +115,7 @@ class BasicEncoder(BaseEncoder):
             subprocess.check_output(command, stderr=subprocess.STDOUT)
 
         except OSError as error:
-            if error.errno == os.errno.ENOENT:
+            if error.errno == errno.ENOENT:
                 # program not found
                 exc = self._build_exception("{}: {}".format(
                     command[0], str(error)), self.command)

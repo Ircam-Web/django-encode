@@ -11,7 +11,9 @@ from queued_storage.backends import QueuedStorage
 
 from encode.conf import settings
 
+from django.utils.deconstruct import deconstructible
 
+@deconstructible
 class QueuedEncodeSystemStorage(QueuedStorage):
     def __init__(self,
                 local=settings.ENCODE_LOCAL_FILE_STORAGE,
@@ -27,3 +29,6 @@ class QueuedEncodeSystemStorage(QueuedStorage):
             remote_options=remote_options,
             delayed=delayed,
             *args, **kwargs)
+
+    def __eq__(self, other):
+        return self.foo == other.foo

@@ -9,7 +9,7 @@ Tests for the :py:mod:`encode.admin` module.
 from __future__ import unicode_literals
 
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from django.contrib.auth.models import User
 from django.contrib.admin.sites import AdminSite
@@ -127,7 +127,7 @@ class MediaAdminTests(FileTestCase, DummyDataMixin):
     def test_fields(self):
         self.assertEqual(list(self.ma.get_form(request).base_fields),
             ['title', 'input_file', 'keep_input_file', 'profiles',
-            'output_files'])
+            'output_files', 'extract', 'reference_content', 'reference_id'])
         self.assertEqual(self.ma.exclude, ('user', 'file_type'))
         self.assertEqual(self.ma.ordering, ['-modified_at'])
         self.assertEqual(self.ma.list_display_links, ('title',))

@@ -96,7 +96,7 @@ class BasicEncoderTestCase(TestCase, DummyDataMixin):
 
         self.assertEqual(str(cm.exception),
             "Command '['convert', 'foo', 'bar']' returned non-zero "
-            "exit status 1")
+            "exit status 1.")
         self.assertEqual(cm.exception.command, "convert foo bar")
 
     def test_baseCommand(self):

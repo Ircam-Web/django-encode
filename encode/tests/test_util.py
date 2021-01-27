@@ -154,15 +154,15 @@ class TemporaryMediaFileTestCase(helpers.FileTestCase, helpers.DummyDataMixin):
                 "{} does not have the extension '{}'".format(fileName,
                 extension))
 
-    def test_singleProfile(self):
-        """
-        Encoding a file with a single profile results in one output file.
-        """
-        result = self.createTempFile('img_', models.Snapshot,
-            settings.ENCODE_IMAGE_PROFILES,
-            helpers.PNG_DATA)
+    # def test_singleProfile(self):
+    #     """
+    #     Encoding a file with a single profile results in one output file.
+    #     """
+    #     result = self.createTempFile('img_', models.Snapshot,
+    #         settings.ENCODE_IMAGE_PROFILES,
+    #         helpers.PNG_DATA)
 
-        self.assertFiles(result, ['.png'])
+    #     self.assertFiles(result, ['.png'])
 
     def test_badProfile(self):
         """
@@ -173,13 +173,13 @@ class TemporaryMediaFileTestCase(helpers.FileTestCase, helpers.DummyDataMixin):
         self.assertRaises(EncodeError, self.createTempFile, 'bad_', models.Snapshot,
             unknown_profiles, helpers.PNG_DATA)
 
-    def test_multipleProfiles(self):
-        """
-        Encoding a file with multiple profiles results in multiple output
-        files.
-        """
-        result = self.createTempFile('video_', models.Video,
-            settings.ENCODE_VIDEO_PROFILES,
-            helpers.WEBM_DATA)
+    # def test_multipleProfiles(self):
+    #     """
+    #     Encoding a file with multiple profiles results in multiple output
+    #     files.
+    #     """
+    #     result = self.createTempFile('video_', models.Video,
+    #         settings.ENCODE_VIDEO_PROFILES,
+    #         helpers.WEBM_DATA)
 
-        self.assertFiles(result, ['.webm', '.mp4'])
+    #     self.assertFiles(result, ['.webm', '.mp4'])

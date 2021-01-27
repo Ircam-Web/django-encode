@@ -19,16 +19,19 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
 ]
+
 
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.sessions',
     'django.contrib.contenttypes',
     'django.contrib.admin',
+    'django.contrib.messages',
     'celery',
     'queued_storage',
     'encode',
@@ -100,7 +103,7 @@ CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 #: Use custom test runner.
 TEST_RUNNER = 'encode.tests.runner.CustomTestSuiteRunner'
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -108,6 +111,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
+
+
 
 # Logging configuration.
 # See https://docs.djangoproject.com/en/dev/topics/logging for
