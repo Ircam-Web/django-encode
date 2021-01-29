@@ -155,3 +155,18 @@ LOGGING = {
         },
     }
 }
+ 
+#Determine if extract feature is active
+ENCODE_EXTRACT_ACTIVE = True
+
+#Determine if extract generic foreign key of MediaBase is auto filled with input file
+ENCODE_AUTO_REFERENCE = True
+
+"""
+Function which determine extract duration 
+input_duration is the input duration in seconds
+"""
+def extract_length_cond(input_duration):
+    return 180
+
+ENCODE_EXTRACT_CONDITION = extract_length_cond

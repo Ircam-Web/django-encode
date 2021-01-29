@@ -27,7 +27,7 @@ from encode.conf import settings
 from encode.signals import check_file_changed
 from encode.storage import QueuedEncodeSystemStorage
 from encode import UploadError, FILE_TYPES, VIDEO, AUDIO, SNAPSHOT
-from encode.util import get_random_filename, get_media_upload_to, short_path
+from encode.util import get_random_filename, get_media_upload_to, short_path, get_media_duration
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -358,6 +358,18 @@ class MediaBase(models.Model):
         help_text=_('Is it an extract ?'),
         default = False
     )
+    duration = models.FloatField(
+        _('Duration'),
+        help_text=_('Duration of the media in seconds'),
+        blank=True,
+        null= True
+    )
+    extract_duration = models.FloatField(
+        _('Extract duration'),
+        help_text=_('Duration of extract in seconds'),
+        blank=True,
+        null= True
+    )
 
 
     reference_content = models.ForeignKey(ContentType, on_delete=models.CASCADE, null = True, blank = True)
@@ -536,6 +548,14 @@ class MediaBase(models.Model):
             # import the tasks here to prevent a circular import
             from encode.tasks import encode_media, store_media, test_task
 
+            #extract
+            extract_encode = False
+            if settings.ENCODE_EXTRACT_ACTIVE :
+                extract_encode = True
+                duration = get_media_duration(self.input_file.path)
+                tab = duration.split(":")
+                self.duration = int(tab[0]) * 60 * 60 + int(tab[1]) * 60 + float(tab[2])
+                self.extract_duration = settings.ENCODE_EXTRACT_CONDITION(self.duration)
             # transfer input file from local disk to remote encoder *once*
             # if self.output_files.count() == 0:
             #     try:

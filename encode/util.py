@@ -20,12 +20,27 @@ from django.utils.crypto import get_random_string
 from encode.conf import settings
 from encode import DecodeError, EncodeError
 
+import re
+import subprocess
 
 __all__ = ["fqn", "get_random_filename", "get_media_upload_to", "parseMedia",
            "storeMedia", "TemporaryMediaFile"]
 
 logger = logging.getLogger(__name__)
 
+def get_media_duration(path):
+    """
+    Helper that returns media duration
+    """
+    process = subprocess.Popen(["ffmpeg", "-i", path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdout, stderr = process.communicate()
+    try:
+        pattern = re.compile(r'Duration: ([\w.-]+):([\w.-]+):([\w.-]+),')
+        match = pattern.search(str(stdout))
+        duration = "%s:%s:%s" % (match.group(1), match.group(2), match.group(3))
+    except Exception as e:
+        duration = None
+    return duration
 
 def fqn(obj):
     """

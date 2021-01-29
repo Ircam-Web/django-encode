@@ -24,6 +24,7 @@ class TempMediaMixin(object):
         """
         Delete storage.
         """
+        pass
         super(TempMediaMixin, self).teardown_test_environment()
         shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
 

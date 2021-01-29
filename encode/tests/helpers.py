@@ -175,9 +175,10 @@ class FileTestCase(WebTest):
         self.inputFileField = "input_file"
 
     def tearDown(self):
+        pass
         WebTest.tearDown(self)
 
-        # remove content of MEDIA_ROOT recursively
+        # # remove content of MEDIA_ROOT recursively
         shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
 
     def createTempFile(self, prefix, model, profiles, data):

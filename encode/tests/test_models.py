@@ -9,11 +9,18 @@ from __future__ import unicode_literals
 
 from django.core.files.base import ContentFile
 
-from encode.models import Audio, Video, EncodingProfile
+from encode.models import Audio, Video, EncodingProfile, Encoder
 from encode.tests.helpers import WEBM_DATA, FileTestCase
 
-from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 
+import encode
+
+import os
+
+from django.conf import settings
+
+from django.contrib.auth.models import User
 
 class MediaBaseTestCase(FileTestCase):
     """
@@ -68,3 +75,46 @@ class MediaBaseTestCase(FileTestCase):
         afile.save()
 
         self.assertEqual(afile.reference, user)
+
+    def test_extract_length(self):
+
+        def extract_length_cond(seconds):
+            if seconds > 60:
+                return seconds
+            else:
+                return 10
+
+        settings.ENCODE_EXTRACT_ACTIVE = True
+
+        settings.ENCODE_EXTRACT_CONDITION = extract_length_cond
+
+        audio = Audio(input_file=SimpleUploadedFile( "audio-short.mp3", open( os.path.dirname(os.path.realpath(__file__)) + "/datas/audio-short.mp3", 'rb').read(),'audio/mpeg'),)
+        audio.save()
+
+        audio2 = Audio(input_file=SimpleUploadedFile( "audio-mini.wav", open( os.path.dirname(os.path.realpath(__file__)) + "/datas/audio-mini.wav", 'rb').read(),'audio/wav'),)
+        audio2.save()
+
+        self.assertEqual(audio.extract_duration, audio.duration)
+        self.assertEqual(audio2.extract_duration, 10)
+
+    def test_extract_length_when_disabled(self):
+
+        def extract_length_cond(seconds):
+            if seconds > 60:
+                return seconds
+            else:
+                return 10
+
+        settings.ENCODE_EXTRACT_ACTIVE = False
+
+        settings.ENCODE_EXTRACT_CONDITION = extract_length_cond
+
+        audio = Audio(input_file=SimpleUploadedFile( "audio-short.mp3", open( os.path.dirname(os.path.realpath(__file__)) + "/datas/audio-short.mp3", 'rb').read(),'audio/mpeg'),)
+        audio.save()
+
+        audio2 = Audio(input_file=SimpleUploadedFile( "audio-mini.wav", open( os.path.dirname(os.path.realpath(__file__)) + "/datas/audio-mini.wav", 'rb').read(),'audio/wav'),)
+        audio2.save()
+
+        self.assertEqual(audio.extract_duration, None)
+        self.assertEqual(audio2.extract_duration, None)
+
